@@ -1,6 +1,6 @@
 import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 const style = {
   btn: "cursor-pointer w-max px-4 py-2 flex justify-center item-center border-2 text-center rounded-lg hover:scale-110 text-2xl leading-none transition duration-200",
 };
@@ -9,6 +9,7 @@ const Bet = ({ topic, side }) => {
   const [total, setTotal] = useState(0);
   const { connected, wallet } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const inputRef = useRef(null);
 
   const postBet = (amount) => {
     setLoading(true);
@@ -22,11 +23,12 @@ const Bet = ({ topic, side }) => {
       .then(() => {
         alert("Bet successfully Placed");
         setTotal((prev) => prev + amount);
+        setAmount(0);
+        inputRef.current.value = 0;
       })
       .catch((e) => alert(e))
       .finally(() => {
         setLoading(false);
-        setAmount(0);
       });
   };
 
@@ -56,6 +58,7 @@ const Bet = ({ topic, side }) => {
                 <input
                   className="outline-none min-w-base bg-[#dedede] px-4 py-2 rounded-lg"
                   type="text"
+                  ref={inputRef}
                   onInput={(e) => {
                     setAmount(+e.target.value);
                   }}

@@ -1,4 +1,5 @@
 import { useWallet } from "@solana/wallet-adapter-react";
+
 import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
