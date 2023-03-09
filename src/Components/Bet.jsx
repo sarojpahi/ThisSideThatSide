@@ -1,4 +1,5 @@
 import { AuthContext } from "@/context/AuthContext";
+import axios from "axios";
 import React, { useContext, useState } from "react";
 const style = {
   btn: "cursor-pointer w-max px-4 py-2 flex justify-center item-center border-2 text-center rounded-lg hover:scale-110 text-2xl leading-none transition duration-200",
@@ -6,15 +7,36 @@ const style = {
 const Bet = ({ topic, side }) => {
   const [amount, setAmount] = useState(0);
   const [total, setTotal] = useState(0);
-  const { connected } = useContext(AuthContext);
+  const { connected, wallet } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+
+  const postBet = (amount) => {
+    setLoading(true);
+    axios
+      .post("/api/bet", {
+        bet_by: wallet.publicKey.toString(),
+        bet_to_topic: topic["_id"]["$oid"],
+        bet_amount: amount,
+        bet_on_side: side ? "a" : "b",
+      })
+      .then(() => {
+        alert("Bet successfully Placed");
+        setTotal((prev) => prev + amount);
+      })
+      .catch((e) => alert(e))
+      .finally(() => {
+        setLoading(false);
+        setAmount(0);
+      });
+  };
 
   const handleSubmit = () => {
-    if (amount >= 0.1 && amount <= 100) {
-      setTotal((prev) => prev + amount);
-      setAmount(0);
-      alert("Bet successfully placed");
-    } else if (amount < 0.1) alert("Minimum bet should be 0.1 sol");
-    else alert("Maximum bet should be 100 sol");
+    if (connected) {
+      if (amount >= 0.1 && amount <= 100) {
+        postBet(amount);
+      } else if (amount < 0.1) alert("Minimum bet should be 0.1 sol");
+      else alert("Maximum bet should be 100 sol");
+    } else alert("Wallet not connected");
   };
 
   return (
@@ -44,7 +66,7 @@ const Bet = ({ topic, side }) => {
               </div>
             </div>
             <div className={`${style.btn} mt-4`} onClick={handleSubmit}>
-              Place Bet
+              {!loading ? "Place Bet" : "Placing Bet"}
             </div>
           </div>
           <div className="displayText uppercase font-semibold text-yellow-900">

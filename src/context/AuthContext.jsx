@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   }, [wallet.connecting]);
   const value = {
     connected,
+    wallet,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
