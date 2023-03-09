@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.displayText {
+  text-orientation: upright;
+  writing-mode: vertical-rl;
+}

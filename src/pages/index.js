@@ -1,10 +1,25 @@
 import Head from "next/head";
 import { Inter } from "@next/font/google";
 import Bet from "@/Components/Bet";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [data, setData] = useState([]);
+  const fetchData = () => {
+    axios
+      .get(`api/topics`)
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((e) => console.log(e));
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <>
       <Head>
@@ -14,16 +29,20 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="p-4">
-        <div className="flex justify-around items-center">
-          <div className="w-full">
-            <Bet />
-          </div>
-          <div className="w-full text-center text-8xl italic text-yellow-600">
-            VS
-          </div>
-          <div className="w-full">
-            <Bet />
-          </div>
+        <div className="grid grid-cols-1 gap-4">
+          {data?.map((el, i) => (
+            <div key={i} className="flex justify-around items-center">
+              <div className="w-full">
+                <Bet topic={el} side={true} />
+              </div>
+              <div className="w-full text-center text-8xl italic text-yellow-600">
+                VS
+              </div>
+              <div className="w-full">
+                <Bet topic={el} />
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     </>
