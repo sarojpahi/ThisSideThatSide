@@ -6,13 +6,13 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const wallet = useWallet();
-  const [connected, setConnected] = useState(false);
+  const [key, setKey] = useState("");
   useEffect(() => {
-    if (wallet.connected) setConnected(true);
+    if (wallet.connected) setKey(wallet.publicKey.toString());
+    else setKey("");
   }, [wallet.connecting]);
   const value = {
-    connected,
-    wallet,
+    key,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,43 +1,53 @@
 import { AuthContext } from "@/context/AuthContext";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
 import React, { useContext, useRef, useState } from "react";
+import { handlePayment } from "./Transfer";
 const style = {
   btn: "cursor-pointer w-max px-4 py-2 flex justify-center item-center border-2 text-center rounded-lg hover:scale-110 text-2xl leading-none transition duration-200",
 };
 const Bet = ({ topic, side }) => {
   const [amount, setAmount] = useState(0);
   const [total, setTotal] = useState(0);
-  const { connected, wallet } = useContext(AuthContext);
+  const { connection } = useConnection();
+  const { publicKey, connected, signTransaction } = useWallet();
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
-
-  const postBet = (amount) => {
-    setLoading(true);
-    axios
-      .post("/api/bet", {
-        bet_by: wallet.publicKey.toString(),
+  const postBet = async (amount) => {
+    try {
+      await axios.post("/api/bet", {
+        bet_by: publicKey.toString(),
         bet_to_topic: topic["_id"]["$oid"],
         bet_amount: amount,
         bet_on_side: side ? "a" : "b",
-      })
-      .then(() => {
-        alert("Bet successfully Placed");
-        setTotal((prev) => prev + amount);
-        setAmount(0);
-        inputRef.current.value = 0;
-      })
-      .catch((e) => alert(e))
-      .finally(() => {
-        setLoading(false);
       });
+      setTotal((prev) => prev + amount);
+      setAmount(0);
+      inputRef.current.value = 0;
+      alert("Bet successfully Placed");
+    } catch (error) {
+      alert(error);
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (connected) {
-      if (amount >= 0.1 && amount <= 100) {
-        postBet(amount);
-      } else if (amount < 0.1) alert("Minimum bet should be 0.1 sol");
+      if (amount >= 0.01 && amount <= 100) {
+        setLoading(true);
+        const sign = await handlePayment(
+          amount,
+          connection,
+          publicKey,
+          signTransaction
+        );
+        if (sign) {
+          await postBet(amount);
+          alert("https://explorer.solana.com/tx/" + sign + `?cluster=devnet`);
+        }
+        setLoading(false);
+      } else if (amount < 0.01) alert("Minimum bet should be 0.01 sol");
       else alert("Maximum bet should be 100 sol");
+      setLoading(false);
     } else alert("Wallet not connected");
   };
 
