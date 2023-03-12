@@ -60,9 +60,11 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center">
-        <div>
-          <span className="font-semibold">Balance</span>: {balance} leaf
-        </div>
+        {connected && (
+          <div>
+            <span className="font-semibold">Balance</span>: {balance} leaf
+          </div>
+        )}
         <WalletMultiButtonDynamic
           style={{
             padding: "10px 20px",
