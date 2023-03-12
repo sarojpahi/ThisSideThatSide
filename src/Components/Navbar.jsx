@@ -48,10 +48,6 @@ const Navbar = () => {
     }
   }, [connected, publicKey]);
 
-  if (!publicKey) {
-    return null; // or return a loading component or message
-  }
-
   return (
     <div className="flex justify-between w-full items-center h-14 border-gray-200 border-b-2 px-4">
       <Link href={"/"}>
