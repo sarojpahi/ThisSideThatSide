@@ -19,6 +19,7 @@ const Navbar = () => {
   const [balance, setBalance] = useState();
   const [loading, setLoading] = useState(false);
   const getUserTokenBalance = async (publicKey, connection) => {
+    let balance = 0;
     try {
       const mintToken = new PublicKey(
         "jbD4P2CMyxYanaCGykdDiEJ1fvFtYFAE3A8oWXcWstC"
@@ -29,11 +30,11 @@ const Navbar = () => {
         publicKey
       );
       const fromAccount = await getAccount(connection, associatedTokenFrom);
-      const balance = +fromAccount.amount.toString() / LAMPORTS_PER_SOL;
-      setBalance(balance);
+      balance = +fromAccount.amount.toString() / LAMPORTS_PER_SOL;
     } catch (e) {
       console.log(`error getting balance: `, e);
     }
+    setBalance(balance);
   };
 
   useEffect(() => {
@@ -90,7 +91,7 @@ const Navbar = () => {
       <div className="flex items-center">
         {connected && (
           <div>
-            <span className="font-semibold">Balance</span>: {balance || 0} leaf
+            <span className="font-semibold">Balance</span>: {balance} leaf
           </div>
         )}
         <WalletMultiButtonDynamic
