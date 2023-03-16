@@ -47,7 +47,7 @@ const Navbar = () => {
         connection.removeAccountChangeListener(publicKey, onUpdateBalance);
       };
     }
-  }, [connected, publicKey]);
+  }, [connected, publicKey, connection]);
 
   const handleAirdrop = async () => {
     setLoading(true);

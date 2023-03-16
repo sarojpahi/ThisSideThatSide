@@ -21,10 +21,10 @@ const Bets = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     if (publicKey) fetchBets(publicKey.toString());
   }, [publicKey]);
+
   return (
     <div>
       {loading && <h2>Loading</h2>}
