@@ -1,12 +1,23 @@
-import { AuthContext } from "@/context/AuthContext";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { handlePayment } from "./Transfer";
 const style = {
   btn: "cursor-pointer w-max px-4 py-2 flex justify-center item-center border-2 text-center rounded-lg hover:scale-110 text-2xl leading-none transition duration-200",
 };
-const Bet = ({ topic, side }) => {
+const toastStyle = {
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "light",
+};
+const Bet = ({ topicData, side }) => {
+  const { topic, total_bet } = topicData;
   const [amount, setAmount] = useState(0);
   const [total, setTotal] = useState(0);
   const { connection } = useConnection();
@@ -24,15 +35,15 @@ const Bet = ({ topic, side }) => {
       setTotal((prev) => prev + amount);
       setAmount(0);
       inputRef.current.value = 0;
-      alert("Bet successfully Placed");
+      toast("Bet successfully Placed");
     } catch (error) {
-      alert(error);
+      toast(error);
     }
   };
 
   const handleSubmit = async () => {
     if (connected) {
-      if (amount >= 0.01 && amount <= 100) {
+      if (amount >= 1 && amount <= 100) {
         setLoading(true);
         const sign = await handlePayment(
           amount,
@@ -42,13 +53,23 @@ const Bet = ({ topic, side }) => {
         );
         if (sign) {
           await postBet(amount);
-          alert("https://explorer.solana.com/tx/" + sign + `?cluster=devnet`);
+          toast(
+            <a
+              target={"_blank"}
+              href={
+                "https://explorer.solana.com/tx/" + sign + `?cluster=devnet`
+              }
+              className={"truncate"}
+            >
+              Tran ID : <span className="font-semibold underline">{sign}</span>
+            </a>,
+            toastStyle
+          );
         }
         setLoading(false);
-      } else if (amount < 0.01) alert("Minimum bet should be 0.01 sol");
-      else alert("Maximum bet should be 100 sol");
-      setLoading(false);
-    } else alert("Wallet not connected");
+      } else if (amount < 1) toast("Minimum bet should be 1 leaf", toastStyle);
+      else toast("Maximum bet should be 100 leaf", toastStyle);
+    } else toast("Wallet not connected", toastStyle);
   };
 
   return (

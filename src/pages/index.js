@@ -1,25 +1,8 @@
 import Head from "next/head";
-import { Inter } from "@next/font/google";
-import Bet from "@/Components/Bet";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
-const inter = Inter({ subsets: ["latin"] });
-
-export default function Home() {
-  const [data, setData] = useState([]);
-  const fetchData = () => {
-    axios
-      .get(`api/topics`)
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((e) => console.log(e));
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+export default function Home({ data }) {
   return (
     <>
       <Head>
@@ -29,22 +12,40 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="p-4">
+        <div className="flex justify-center items-center pb-4 font-bold text-2xl">
+          Topics To Bet
+        </div>
         <div className="grid grid-cols-1 gap-4">
           {data?.map((el, i) => (
             <div key={i} className="flex justify-around items-center">
-              <div className="w-full">
-                <Bet topic={el} side={true} />
-              </div>
-              <div className="w-full text-center text-8xl italic text-yellow-600">
-                VS
-              </div>
-              <div className="w-full">
-                <Bet topic={el} />
-              </div>
+              <Link
+                href={`topic/${el["_id"]["$oid"]}`}
+                className="lg:col-span-2 col-span-1 bg-white justify-between w-full border p-2 lg:p-4 rounded-lg"
+              >
+                <div className="flex flex-col w-full pb-4">
+                  <p className="text-2xl font-medium">{el.topic_name}</p>
+                  <p className="text-gray-600">
+                    Status : {el.topic_is_running ? "Ongoing" : "Completed"}
+                  </p>
+                  <p className="text-gray-600">This Side : {el.topic_side_a}</p>
+                  <p className="text-gray-600">That Side : {el.topic_side_b}</p>
+                </div>
+              </Link>
             </div>
           ))}
         </div>
       </main>
     </>
   );
+}
+
+export async function getStaticProps() {
+  try {
+    const res = await axios.get("/api/topics");
+    const data = res.data.reverse();
+    return { props: { data } };
+  } catch (error) {
+    console.log(error);
+    return { props: { data: null } };
+  }
 }

@@ -6,6 +6,7 @@ import {
   getAccount,
 } from "@solana/spl-token";
 import { PublicKey, Transaction } from "@solana/web3.js";
+import { toast } from "react-toastify";
 
 export const configureAndSendCurrentTransaction = async (
   transaction,
@@ -80,7 +81,6 @@ export const handlePayment = async (
     );
     return signature;
   } catch (error) {
-    alert(error);
-    console.log(error);
+    toast.error(error.message);
   }
 };
