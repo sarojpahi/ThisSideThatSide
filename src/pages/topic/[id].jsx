@@ -4,7 +4,8 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-axios.defaults.baseURL = "http://localhost:3001";
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_DEV_BASE_URL;
+
 const style = {
   btn: "cursor-pointer w-max px-4 py-2 flex justify-center item-center border-2 text-center rounded-lg hover:scale-110 text-2xl leading-none transition duration-200",
 };
@@ -74,6 +75,7 @@ const TopicID = ({ topicData, betData }) => {
           toast(
             <a
               target={"_blank"}
+              rel="noreferrer"
               href={
                 "https://explorer.solana.com/tx/" + sign + `?cluster=devnet`
               }

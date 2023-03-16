@@ -16,7 +16,7 @@ const WalletMultiButtonDynamic = dynamic(
 const Navbar = () => {
   const { connected, publicKey } = useWallet();
   const { connection } = useConnection();
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState();
   const [loading, setLoading] = useState(false);
   const getUserTokenBalance = async (publicKey, connection) => {
     try {
@@ -53,7 +53,7 @@ const Navbar = () => {
     setLoading(true);
     try {
       if (connected) {
-        const res = await axios.post(`/api/mint`, {
+        await axios.post(`/api/mint`, {
           user_pubkey: publicKey.toString(),
           amount: 10,
         });
