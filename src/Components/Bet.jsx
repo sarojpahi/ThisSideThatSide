@@ -56,6 +56,7 @@ const Bet = ({ topicData, side }) => {
           toast(
             <a
               target={"_blank"}
+              rel="noreferrer"
               href={
                 "https://explorer.solana.com/tx/" + sign + `?cluster=devnet`
               }

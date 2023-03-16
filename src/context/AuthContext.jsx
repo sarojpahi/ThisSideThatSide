@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (wallet.connected) setKey(wallet.publicKey.toString());
     else setKey("");
-  }, [wallet.connecting]);
+  }, [wallet.connected, wallet.publicKey]);
   const value = {
     key,
   };
