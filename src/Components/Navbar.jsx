@@ -90,7 +90,7 @@ const Navbar = () => {
       <div className="flex items-center">
         {connected && (
           <div>
-            <span className="font-semibold">Balance</span>: {balance} leaf
+            <span className="font-semibold">Balance</span>: {balance || 0} leaf
           </div>
         )}
         <WalletMultiButtonDynamic
